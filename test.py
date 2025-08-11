@@ -1,7 +1,7 @@
 import asyncio
-import time
 from typing import Any
-from restq import Worker, task
+from restq import Queue
+from test_pickle import TestPickleClass
 from redis.asyncio import Redis as AsyncRedis, from_url as redis_from_url
 
 
@@ -12,21 +12,14 @@ async def get_redis_client(*args: Any, **kwargs: Any) -> AsyncRedis: # type: ign
 
     return redis
 
-@task(name="sendWorkEmailTask")
-def send_work_email(name: str) -> None:
-    print("Started something task")
-    print(f"Sending.... work email to {name}")
-    print("Done")
-
-
 
 async def main() -> None:
     redis = await get_redis_client(decode_responses=True)
 
-    worker = Worker(queue_name="email-queue", redis=redis, tasks=[send_work_email])
+    queue = Queue(name="email-queue", redis=redis)
 
-    await worker.start()
+    await queue.add(task_name="sendWorkEmailTask", delay=100, kwargs={"name": "Wisdom"}, mode="json")
+
 
 
 asyncio.run(main())
-

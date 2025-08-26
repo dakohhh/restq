@@ -1,26 +1,20 @@
 import orjson
 import base64
 import pickle
-import os
-import hashlib
 import inspect
-from uuid import uuid4
 import asyncio
-from typing import Callable, Any, Optional, Coroutine, Literal, Union
+from uuid import uuid4
 from functools import wraps
 from datetime import datetime, timedelta, timezone
 from pydantic import BaseModel, Field, field_serializer
 from redis import Redis, from_url as sync_redis_from_url
+from typing import Callable, Any, Optional, Literal, Union
 from redis.asyncio import Redis as AsyncRedis, from_url as async_redis_from_url
 
-def get_file_absolute_hash() -> str:
-    file_path = os.path.abspath(__file__)
-    file_hash = hashlib.sha1(file_path.encode()).hexdigest()
-    return file_hash
-
-RESTQ_REDIS_URL = "redis://localhost:6379/0"
+# from logger import LoggerService
 
 QueueAddMode = Literal["json", "pickle"]
+
 
 class RestQException(Exception):
     """ Base exception for RestQ """
@@ -77,17 +71,10 @@ def task(name: str, max_retry: Optional[int] = None, retry_delay: float = 1) -> 
 
 
 class AsyncQueue:
-    def __init__(self, name: str, url: Optional[str] = None, redis: Optional[AsyncRedis] = None):
+    def __init__(self, name: str, url: str):
         self.name = name
 
-        if not url and not redis:
-            raise RestQException("Redis url or Client is required")
-
-        if url:
-            self.redis = get_redis_async_client(url=url, decode_responses=True)
-        
-        if redis:
-            self.redis = redis
+        self.redis = get_redis_async_client(url=url, decode_responses=True)
 
     async def add(self, *, task_name: str, kwargs: Optional[dict[str, Any]] = None, mode: QueueAddMode = "json", delay: Optional[Union[int, float, timedelta]] = None) -> None:
         
@@ -126,17 +113,10 @@ class AsyncQueue:
 
 
 class Queue:
-    def __init__(self, name: str, url: Optional[str] = None, redis: Optional[Redis] = None):
+    def __init__(self, name: str, url: str):
         self.name = name
 
-        if not url and not redis:
-            raise RestQException("Redis url or Client is required")
-
-        if url:
-            self.redis = get_redis_sync_client(url=url, decode_responses=True)
-        
-        if redis:
-            self.redis = redis
+        self.redis = get_redis_sync_client(url=url, decode_responses=True)
     
     def add(self, *, task_name: str, kwargs: Optional[dict[str, Any]] = None, mode: QueueAddMode = "json", delay: Optional[Union[int, float, timedelta]] = None) -> None:
         
@@ -175,22 +155,14 @@ class Queue:
 
 
 class Worker:
-    def __init__(self, *, queue_name: str, url: Optional[str] = None, redis: Optional[AsyncRedis] = None, tasks:list[Callable[...,  Task]], name: Optional[str] = None):
+    def __init__(self, *, queue_name: str, url: str, tasks:list[Callable[...,  Task]], name: Optional[str] = None):
         self.name = f"worker-{uuid4().hex[:8]}" if not name else name
         self.queue_name = queue_name
         self.tasks = tasks
         self.group_name = f"workers:{self.queue_name}"
         self.task_map = { task().name : task() for task in self.tasks }
 
-
-        if not url and not redis:
-            raise RestQException("Redis url or Client is required")
-
-        if url:
-            self.redis = get_redis_async_client(url=url, decode_responses=True)
-        
-        if redis:
-            self.redis = redis
+        self.redis = get_redis_async_client(url=url, decode_responses=True)
 
     async def start(self) -> None:
         # Start sub-worker for delayed task

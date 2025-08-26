@@ -2,10 +2,10 @@ import orjson
 import base64
 import pickle
 import inspect
-from anyio import to_thread
 import asyncio
 from uuid import uuid4
 from .logger import logger
+from anyio import to_thread
 from datetime import datetime
 from .types import QueueAddMode
 from .task import Task, TaskRecord

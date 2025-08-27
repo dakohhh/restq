@@ -1,7 +1,6 @@
 from datetime import datetime
 from .types import QueueAddMode
 from typing import Callable, Any, Optional
-from fastapi_utils.tasks import repeat_every
 from pydantic import BaseModel, Field, field_serializer
 
 
@@ -15,7 +14,7 @@ class Task(BaseModel):
     retry_delay: float = Field(default=1, description="The time (in seconds) delayed before a retry of task begins in seconds, defaults to 1 if not provided")
 
 
-# TODO: Implementation of 
+# TODO: Implementation of Repeated/Scheduled Task with Cron Expression
 class RepeatedTask(Task):
     wait_first: Optional[float]
 

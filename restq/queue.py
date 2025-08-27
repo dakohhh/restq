@@ -21,7 +21,7 @@ class AsyncQueue:
         processed_kwargs = None
         if kwargs:
             if mode == "pickle":
-                logger.warning("Queue '%s' is using pickle mode. Ensure input is trusted!", self.name)
+                logger.warning("Queue '%s' used pickle mode. Ensure input is trusted!", self.name)
 
                 pickle_bytes = pickle.dumps(kwargs)
 

@@ -7,7 +7,7 @@ async def main() -> None:
 
     queue = AsyncQueue(name="your-unique-queue-name", url=REDIS_URL)
 
-    await queue.add(task_name="MyTask", delay=30, kwargs={"foo": "bar"}, mode="pickle")
+    await queue.add(task_name="MyTask", kwargs={"foo": "bar"}, mode="json")
 
 asyncio.run(main())
 

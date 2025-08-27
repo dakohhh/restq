@@ -1,3 +1,4 @@
+import os
 import orjson
 import base64
 import pickle
@@ -9,23 +10,32 @@ from anyio import to_thread
 from datetime import datetime
 from .types import QueueAddMode
 from .task import Task, TaskRecord
+from redis.asyncio import Redis as AsyncRedis
+from multiprocessing import Process, freeze_support
 from typing import Callable, Any, Optional
 from .clients import get_redis_async_client
 
-
 class Worker:
     def __init__(self, *, queue_name: str, url: str, tasks:list[Callable[...,  Task]], name: Optional[str] = None):
+        freeze_support()
+
         self.name = f"worker-{uuid4().hex[:8]}" if not name else name
         self.queue_name = queue_name
         self.tasks = tasks
         self.group_name = f"workers:{self.queue_name}"
         self.task_map = { task().name : task() for task in self.tasks }
+        self.url = url
+        self.redis = get_redis_async_client(url=self.url, decode_responses=True)
 
-        self.redis = get_redis_async_client(url=url, decode_responses=True)
+    async def loop(self) -> None:
+        await asyncio.gather(
+            self.get_delayed_tasks(), 
+            self.execute_tasks(), 
+            self.cleanup_tasks_on_pel()
+        )
 
-    async def start(self) -> None:
-        # Start sub-worker for delayed task
-    
+    # TODO: Implement Concurrency (threads/multiprocessing)
+    async def start(self, concurrency: int = 1) -> None:
         # Check if the stream (queue name) exists
         stream_exists = await self.redis.exists(self.queue_name)
         if not stream_exists:
@@ -47,9 +57,9 @@ class Worker:
                 id="$",
                 mkstream=True
             )
-            
-        await asyncio.gather(self.get_delayed_tasks(), self.execute_tasks(), self.cleanup_tasks_on_pel())
 
+        # Start the worker loop
+        await self.loop()
 
     def parse_task_response(self, response: Any) -> dict[str, Any]:
         if not response or not response[0][1]:
@@ -258,3 +268,5 @@ class Worker:
 
             if cursor == "0-0":
                 await asyncio.sleep(1)
+
+

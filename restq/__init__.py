@@ -5,7 +5,6 @@ from .queue import Queue, AsyncQueue
 from .exceptions import RestQException
 
 
-
 __all__ = [
     "task",
     "Worker",

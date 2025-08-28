@@ -1,0 +1,62 @@
+site_name: RestQ
+site_description: A lightweight, fully async task queue built on top of Redis
+repo_url: https://github.com/dakohhh/restq
+theme:
+  name: material
+  palette:
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    # Palette toggle for light mode
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+  font:
+    text: Roboto
+    code: Roboto Mono
+  icon:
+    repo: fontawesome/brands/github
+  # This ensures dark mode is default
+  default_theme: dark
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quickstart.md
+  - User Guide:
+    - Queue Configuration: user-guide/queue-configuration.md
+    - Task Arguments: user-guide/task-arguments.md
+    - Worker Configuration: user-guide/worker-configuration.md
+    - Advanced Usage: user-guide/advanced-usage.md
+  - API Reference:
+    - Queue: api/queue.md
+    - Worker: api/worker.md
+    - Task Decorator: api/task-decorator.md

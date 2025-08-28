@@ -1,0 +1,18 @@
+server {
+    listen 80;
+    server_name server;
+
+    root /var/www/html;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Ensure static files (css, js, images, etc.) are served directly
+    location ~* \.(?:ico|css|js|gif|jpe?g|png|woff2?|eot|ttf|svg)$ {
+        expires 6M;
+        access_log off;
+        add_header Cache-Control "public";
+    }
+}

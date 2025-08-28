@@ -1,6 +1,6 @@
 # Welcome to RestQ
 
-RestQ is a lightweight, and fully async task queue built on top of Redis. It provides a simple yet powerful way to handle task job processing in your Python applications. Think of it as your application's personal assistant that diligently processes tasks whenever you need them done.
+RestQ is a lightweight, and fully async task queue built on top of Redis. It provides a simple yet powerful way to handle task job processing in your Python applications. Think of it like this: You’ve got work that needs to happen in the background (sending emails, crunching data, generating reports.). Instead of blocking your app, you drop those tasks into a queue, and workers pick them up and run them wherever they live.
 
 ## Why RestQ?
 
@@ -50,22 +50,13 @@ queue.add(
 RestQ is designed to be language-agnostic. Here's how task enqueueing looks in different languages:
 
 === "Python"
-    ```python
-    queue.add("process_order", kwargs={"order_id": "123", "amount": 99.99})
-    ```
+    ``python     queue.add("process_order", kwargs={"order_id": "123", "amount": 99.99})     ``
 
 === "JavaScript (Coming Soon)"
-    ```javascript
-    await queue.add("process_order", { orderId: "123", amount: 99.99 })
-    ```
+    ``javascript     await queue.add("process_order", { orderId: "123", amount: 99.99 })     ``
 
 === "Go (Coming Soon)"
-    ```go
-    queue.Add("process_order", map[string]interface{}{
-        "order_id": "123",
-        "amount": 99.99,
-    })
-    ```
+    ``go     queue.Add("process_order", map[string]interface{}{         "order_id": "123",         "amount": 99.99,     })     ``
 
 ## Getting Started
 

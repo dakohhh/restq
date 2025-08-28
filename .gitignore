@@ -1,4 +1,5 @@
 .venv
+dist
 .vscode
 __pycache__/
 docker-compose-dev.yaml

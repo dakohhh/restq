@@ -1,9 +1,11 @@
 [tool.poetry]
-name = "restq"
+name = "restq-py"
 version = "0.1.0"
 description = "Restq is a lightweight high-performance task queue built on top of Redis"
 authors = ["dakohhh <wiizzydreadmill@gmail.com>"]
-repository = "https://github.com/dakohhh/fastapi-basic-auth"
+repository = "https://github.com/dakohhh/restq"
+homepage = "https://github.com/dakohhh/restq"
+license = "MIT"
 readme = "README.md"
 keywords = ["queue", "task", "worker", "lightweight"]
 
